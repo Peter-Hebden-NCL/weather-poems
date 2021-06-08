@@ -1,0 +1,164 @@
+<head>
+    <style>
+        html {
+            background-color: lightgray;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        #container {
+            background-color: black;
+            border: solid black 1px;
+            position: relative;
+            top: 5vh;
+            height: 90vh;
+            width: 50vh;
+            margin: 0 auto;
+            overflow:hidden;
+            font-size: 3vh;
+        }
+
+        #weather {
+            text-align:center;
+            color: white;
+        }
+
+        #icon {
+            background-color: #7cc4e0;;
+            height: 10vh;
+            width: 10vh;
+            /* visibility: hidden; */
+            display: block;
+            margin: 0 auto;
+            padding: 1vh;
+            border: solid black 1px;
+            border-radius: 100%;
+        }
+
+        #poem {
+            border:1px black solid;
+            position: relative;
+            height: 55vh;
+            width: 90%;
+            margin: 5vh auto;
+            background-color: white;
+            overflow-y: scroll;
+            padding: 0.5em;
+        }
+
+        #test {
+            border: 1px solid black;
+            position:fixed;
+            bottom:3vh;
+            right:3vh;
+            background-color: white;
+            padding: 3px;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    
+    <div id='container'>
+        <p id='weather'>&nbsp;</p>
+        <img id='icon' src='loading-gif.gif'>
+
+        <div id='poem'></div>
+
+    </div>
+
+    <div id="test">Use test coordinates</div>
+
+<script src="jquery-3.4.1.js"></script>
+
+<script>
+
+    // the page needs to run on a node server to access the weather API (CORS)
+
+    var lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut a molestie tellus. Sed pretium, elit sit amet congue ullamcorper, magna ligula condimentum tellus, a blandit risus tortor placerat nunc. Nulla facilisi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed vehicula consectetur laoreet. Ut venenatis pellentesque mauris vel interdum. Vivamus turpis nunc, cursus elementum dignissim eget, laoreet non leo. Donec accumsan sed lacus convallis volutpat. Etiam vel ultrices augue. Integer sed nibh semper, consequat risus vel, aliquet mauris. Vivamus mattis, dolor vel consectetur suscipit, leo nulla pretium leo, nec fringilla risus sem et purus.";
+
+    var lat;
+    var long;
+    var err;
+
+    var weather;
+
+
+    //changing icon background for night time
+
+    var the_hour = new Date().getHours();
+
+    if (the_hour < 5 || the_hour > 19) {
+        $('#icon').css({"background-color":"#0a3d50"});
+    }
+
+    //the main function for getting the device location
+    function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(getPosition, showError);
+    } else { 
+        $("#weather").html("Geolocation is not supported by this browser.")
+    }
+    }
+
+    //callback for successful geolocation request
+    function getPosition(position) {
+        //setting the lat and long for the device's location
+        lat = position.coords.latitude;
+        long = position.coords.longitude;
+
+        //calling the weather API on the location
+        $.getJSON('https://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+long+'&appid=b7d35a814153cc2998fd390cd3e9b73d', function(data) {
+            weather = data;
+            $("#weather").html(
+                weather.name + " - " + weather.weather[0].description
+            );
+            $("#icon").attr('src','http://openweathermap.org/img/wn/'+weather.weather[0].icon+'.png');
+            $('#poem').html(
+                "<p>("+weather.weather[0].description+" poem)"+"</p>"+
+                "<p>"+lorem+"</p>"
+            );
+        });
+    }
+
+    //callback for error on geolocation request
+    function showError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+        err = "User denied the request for Geolocation.";
+        console.log(err);
+        break;
+        case error.POSITION_UNAVAILABLE:
+        err = "Location information is unavailable.";
+        console.log(err);
+        break;
+        case error.TIMEOUT:
+        err = "The request to get user location timed out.";
+        console.log(err);
+        break;
+        case error.UNKNOWN_ERROR:
+        err = "An unknown error occurred.";
+        console.log(err);
+        break;
+    }
+    }
+
+    //running the location function on load
+    getLocation();
+
+    //dummy cooordinates for testing button
+    $("#test").on("click", function(){
+        $("#icon").attr('src','loading-gif.gif');
+        getPosition(
+            {coords: {
+                latitude: 51.4816,
+                longitude: 3.1791
+            }}
+        );
+    })
+    
+
+</script>
+
+</body>

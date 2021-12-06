@@ -26,7 +26,6 @@
             background-color: #7cc4e0;;
             height: 10vh;
             width: 10vh;
-            /* visibility: hidden; */
             display: block;
             margin: 0 auto;
             padding: 1vh;
@@ -59,7 +58,7 @@
 </head>
 
 <body>
-    
+    <!--MAIN DISPLAY-->
     <div id='container'>
         <p id='weather'>&nbsp;</p>
         <img id='icon' src='loading-gif.gif'>
@@ -67,16 +66,12 @@
         <div id='poem'></div>
 
     </div>
-
+    <!--TRST CO-COORDINATES BUTTON-->
     <div id="test">Use test coordinates</div>
 
-<script src="jquery-3.4.1.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
-
-    // the page needs to run on a node server to access the weather API (CORS)
-
-    var lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut a molestie tellus. Sed pretium, elit sit amet congue ullamcorper, magna ligula condimentum tellus, a blandit risus tortor placerat nunc. Nulla facilisi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed vehicula consectetur laoreet. Ut venenatis pellentesque mauris vel interdum. Vivamus turpis nunc, cursus elementum dignissim eget, laoreet non leo. Donec accumsan sed lacus convallis volutpat. Etiam vel ultrices augue. Integer sed nibh semper, consequat risus vel, aliquet mauris. Vivamus mattis, dolor vel consectetur suscipit, leo nulla pretium leo, nec fringilla risus sem et purus.";
 
     var lat;
     var long;
@@ -109,7 +104,8 @@
         long = position.coords.longitude;
 
         //calling the weather API on the location
-        $.getJSON('https://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+long+'&appid=b7d35a814153cc2998fd390cd3e9b73d', function(data) {
+        //This requires a free app ID for Open Weather, which can be acquired by signing up for an account at https://home.openweathermap.org/users/sign_up
+        $.getJSON('https://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+long+'&appid=APP_ID_HERE', function(data) {
             weather = data;
             $("#weather").html(
                 weather.name + " - " + weather.weather[0].description
